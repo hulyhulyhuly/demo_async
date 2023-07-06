@@ -223,3 +223,132 @@ iter(Iterator)          def __iter__(self): return self         AUTO implement
     + 定義一個處理其他可迭代物件的迭代器
     + 定義一個不依賴資料儲存的資料生成器
 """
+
+# %%
+""" 為資料類實現`＿＿iter__` """ 
+# 迭代器類
+class MyCustomDataIterator:
+    def __init__(self, data) -> None:
+        self.data = data
+        self.index = -1
+
+    def __iter__(self):
+        return self
+    
+    def __next__(self):
+        self.index += 1
+        if self.index < self.data.size:
+            return self.data.get_value(self.index)
+        raise StopIteration
+
+# 可迭代資料類
+class MyCustomData:
+    # 其餘部分程式碼不重要略過
+    ...
+    @property
+    def size(self):     # 假設可以得到資料的大小
+        return self.size
+
+    def get_value(self, index): # 假設可通過索引值按順序得到資料
+        return index
+
+    def __iter__(self):
+        return MyCustomDataIterator(self)   # 構建迭代器
+
+
+""" 使用 `yield` """
+# 無需定義這樣的類
+# class MyCustomDataIterator:
+#     def __init__(self, data) -> None:
+#         self.data = data
+#         self.index = -1
+#
+#     def __iter__(self):
+#         return self
+#
+#     def __next__(self):
+#         self.index += 1
+#         if self.index < self.data.size:
+#             return self.data.get_value(self.index)
+#         raise StopIteration
+
+# 可迭代資料類
+class MyCustomData:
+    # 其餘部分程式碼不重要略過
+    ...
+    @property
+    def size(self):     # 假設可以得到資料的大小
+        return self.size
+
+    def get_value(self, index): # 假設可通過索引值按順序得到資料
+        return index
+
+    def __iter__(self):
+        index = -1  # 注意，必須是局部變數
+        while index < 2:    # 迭代完成條件
+            index += 1
+            yield self.get_value(index)
+
+mydata = MyCustomData() # 注意：mydata 是可迭代物件，但不是迭代器
+
+# %%
+""" 實現有處理資料能力的迭代器 """
+BLACK_LIST = ['免費', '檢舉']
+
+class DemoIterator:
+    def __init__(self, actions):
+        self.actions = actions
+        self.index = 0      # 初始化索引位置
+
+    def __next__(self):
+        while self.index < len(self.actions):
+            action = self.actions[self.index]
+            self.index += 1     # 更新索引位置
+            if action in BLACK_LIST:
+                continue
+            elif '幣' in action:
+                return action * 2
+            else:
+                return action
+        raise StopIteration
+
+    def __iter__(self):
+        return self
+
+def demo(actions):
+    for action in actions:
+        if action in BLACK_LIST:
+            continue
+        elif '幣' in action:
+            yield action * 2
+        else:
+            yield action
+
+actions = ['點讚', '投幣', '檢舉']
+for x in demo(actions):
+    print(x)
+
+# %%
+""" 實現一個資料生成器 """
+# 倒數計時器
+class DownCounter:
+    def __init__(self, start):
+        self.start = start
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.start > 0:
+            self.start -= 1
+            return self.start
+        raise StopIteration
+
+""" 使用 `yield` 實現同樣的功能 """
+def countdown(start):
+    while start > 0:
+        start -= 1
+        yield start
+
+for x in countdown(5):
+    print(x)
