@@ -35,3 +35,32 @@ def coro_averager():
             avg = total / count
 ```
 """
+
+"""
+## 生成器的 3 種模式
+> 來自「仁慈的獨裁者」的權威解釋
+
+Python之父 Guido 在一封郵件裡總結道, 生成器有 3 種模式:
+> There's the tranditional "pull" style (iterator). "push" style (like the averaging example). and then there are "tasks"
+-- Guido van Rossum <討論`yield from`的郵件>
+
++ pull: 特點在於能不斷向外產出資料, 也就是迭代器
++ push: 特點在於能不斷向內 發送資料, 比如上一章中的計算移動平均值的例子, 是非常早期的協程概念
++ task: 任務式 (是 AsyncIO 裡的協程)
+"""
+
+"""
++ pull式, 也就是生成器的資料流
+    > for-loop <- Iterator <- Iterator <- ... <- Iterator <- Iterator <- Iterable
+
++ push式, 也就是經典的協程資料流
+    + push式 資料流-1
+    > Source of Data -> Coroutine -> Coroutine -> ... -> Coroutine -> Coroutine -> ...
+
+    + push式 資料流-2
+    >                 -> Coroutine ->
+    > Source of Data --> Coroutine --> Coroutine
+    >                 -> Coroutine ->
+
++ task式: 任務式 (是 AsyncIO 裡的協程)
+"""
