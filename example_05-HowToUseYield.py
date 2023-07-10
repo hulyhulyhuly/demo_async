@@ -41,7 +41,9 @@ def coro_averager():
 > 來自「仁慈的獨裁者」的權威解釋
 
 Python之父 Guido 在一封郵件裡總結道, 生成器有 3 種模式:
-> There's the tranditional "pull" style (iterator). "push" style (like the averaging example). and then there are "tasks"
+> There's t
+
+he tranditional "pull" style (iterator). "push" style (like the averaging example). and then there are "tasks"
 -- Guido van Rossum <討論`yield from`的郵件>
 
 + pull: 特點在於能不斷向外產出資料, 也就是迭代器
@@ -61,6 +63,65 @@ Python之父 Guido 在一封郵件裡總結道, 生成器有 3 種模式:
     >                 -> Coroutine ->
     > Source of Data --> Coroutine --> Coroutine
     >                 -> Coroutine ->
+"""
 
-+ task式: 任務式 (是 AsyncIO 裡的協程)
+"""
+## push vs task
+# 例子最初來源: https://mail.python.org/pipermail/python-ideas/2009-April/003841.html
+# 《流暢的 Python》中有一個改寫的版本; 這同時借鑒了兩者的寫法
+
++ 這是 push式生成器
+    ```python
+    def coro_averager():
+        ''' 計算移動平均值 '''
+        count = 0
+        total = 0
+        avg = None
+        while True:
+            try:
+                val = yield avg
+            except GeneratorExit:
+                return total, count, avg
+            else:
+                total += val
+                count += 1
+                avg = total / count
+    ```
+
++ 這是任務式生成器的偽程式碼
+    ```python
+    def core_some_task(n):
+        print('doing step 1.')
+        yield "1秒鐘後回來"     # 出棧前能夠傳出去的最後訊息
+        # 1秒鐘時間到, 繼續
+        print('doing step 2)
+        data = yield "data 可以用了再叫我"
+        # data 準備好了, 繼續吧
+        return 'done'
+    ```
+"""
+
+"""
+## data vs event
+
+一句話解釋:
+    + pull/push 都是受**資料驅動**的
+    + task是受**事件驅動**的
+
+'''python    
+# pull風格 生成器偽程式碼
+def pull_style():
+    while still_have_data:
+        yield data
+
+# push風格 生成器偽程式碼
+def push_style():
+    while still_have_data:
+        input_data = yield output_data
+
+
+# task風格 生成器偽程式碼
+def task_style():
+    ??? = yield ???
+'''
 """
