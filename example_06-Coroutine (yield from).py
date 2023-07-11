@@ -136,3 +136,43 @@ while 1:    # 不遇到 StopIteraton 不算完
 RESULT = _r     # StopIteration 帶出來的值就是結果
 
 # %%
+"""
+## 定義一個任務
+
+### 一個同步模式的簡單任務
+"""
+
+def one_task():
+    """ 一個任務 """
+    print(f'begin task')
+    ... # 其他步驟
+    print(f'    begin big_step:')
+
+    big_result = big_step() # <---
+
+    print(f'    end big_step with {big_result}')
+    ... # 其他步驟
+
+    print(f'end task')
+
+def big_step():
+    ... # 其他小步驟
+    print(f'        begin small_step:')
+
+    small_result = small_step() # <---
+
+    print(f'        end small_step with {small_result}')
+    ... # 其他小步驟
+    return small_result * 1000
+
+def small_step():
+    print('           努力工作中...')
+    return 123  # 完成了
+
+# 執行任務
+one_task()
+
+""" 遇到阻塞 """
+# one_task()
+
+# %%
